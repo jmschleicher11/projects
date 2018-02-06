@@ -17,7 +17,6 @@ from scipy import ndimage
 
 img=mpimg.imread('purple_flower.jpg')
 # img: [height, width, RGB]
-#imgplot = plt.imshow(img)
 
 # Plot the original image and broken up into RGB components
 fig = plt.figure()
@@ -42,24 +41,21 @@ width = 80    # In mm
 height = aspect_ratio * width
 
 #https://www.shipwreckbeads.com/support/docs/SeedBeadTable
-# Delicas 11/0
+# Delicas siz 11/0
 bead_size_w = 1.6   # mm
 bead_size_h = 1.3   # mm
 
 # Calculate how many beads will be used in both dimensions
-beads_w = int(width / bead_size_w)
-beads_h = int(height / bead_size_h)
+beads_w = int(width / bead_size_w)      # beads
+beads_h = int(height / bead_size_h)     # beads
 bead_aspect = beads_h/beads_w
 # Actual dimensions of final product
-final_width = beads_w * bead_size_w
-final_height = beads_h * bead_size_h
+final_width = beads_w * bead_size_w     # mm
+final_height = beads_h * bead_size_h    # mm
 
 # Calculate how many pixels will be averaged into each bead
 pixels_w = int(np.shape(img)[1] / beads_w)
 pixels_h = int(np.shape(img)[0] / beads_h)
-
-#fig = plt.figure()
-#plt.imshow(img, interpolation="nearest")
 
 # For now, just cutting pixels that aren't a multiple of the number of beads
 o_reds = img[:,:,0]
@@ -97,8 +93,6 @@ ax4 = fig.add_subplot(224)  # bottom right
 ax4 = plt.imshow(final_result, interpolation='nearest', aspect=bead_aspect)
 
 
-
-
 # Simple case to test out
 test_reds = np.array([[82, 0, 82, 82],[82, 82, 82, 79],
              [82, 82, 82, 47],[82, 90, 82, 82]])
@@ -106,6 +100,7 @@ test_greens = np.array([[179, 0, 136, 136],[179, 39, 179,180],
                [179, 179, 179, 229],[179, 200, 179, 179]])
 test_blues = np.array([[243, 0, 44, 44],[243, 243, 243, 52],
               [243, 243, 102, 47],[243, 39, 243, 243]])
+test = np.stack([test_reds, test_greens, test_blues], axis=2).astype(np.uint8)
 
 def pixelate(original, rows, columns, r_calc, c_calc):
     
@@ -118,9 +113,9 @@ def pixelate(original, rows, columns, r_calc, c_calc):
     
     return color_result
 
-r_result = pixelate(test_reds, 1, 2, 4, 2)      # Alternates: 
-g_result = pixelate(test_greens, 1, 2, 4, 2)    # (2,2,2,2), (1,1,4,4)
-b_result = pixelate(test_blues, 1, 2, 4, 2)
+r_result = pixelate(test_reds, 2, 2, 2, 2)      # Alternates: 
+g_result = pixelate(test_greens, 2, 2, 2, 2)    # (2,2,2,2), (1,1,4,4), 
+b_result = pixelate(test_blues, 2, 2, 2, 2)     # (1,2,4,2)
 
 test_result = np.stack([r_result, g_result, b_result], axis=2).astype(np.uint8)
 
@@ -136,6 +131,13 @@ ax3 = plt.imshow(test_blues, cmap='Blues', interpolation="nearest")
 plt.colorbar()
 ax4 = fig.add_subplot(224)  # bottom right
 ax4 = plt.imshow(test_result, interpolation="nearest")
-#plt.colorbar()
     
+# Look into unique for the original test data (4x4)
+def unique_colors(array_to_test):
+    
+    long_dimension = np.shape(array_to_test)[0] * np.shape(array_to_test)[1]
+    uniques = np.unique(array_to_test.reshape(long_dimension, 3), axis=0)
 
+    return uniques
+
+colors = unique_colors(final_result)
