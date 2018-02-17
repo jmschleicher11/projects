@@ -60,8 +60,6 @@ def unique_colors(array_to_test):
     return uniques
 
 
-#plt_image_components(img, img[:,:,0], img[:,:,1], img[:,:,2], 1)
-
 # Get the aspect ratio of the original image
 aspect_ratio = np.shape(img)[0] / np.shape(img)[1]
 # Eventually this is read in from the user?
@@ -101,10 +99,11 @@ b_result = pixelate(small_blues, beads_h, beads_w, pixels_h, pixels_w)
 final_result = np.stack([r_result, g_result, b_result], 
                         axis=2).astype(np.uint8)
 
+#plt_image_components(img, img[:,:,0], img[:,:,1], img[:,:,2], 1)
 #plt_image_components(final_result, r_result, g_result, b_result, bead_aspect)
 #colors_original = unique_colors(img)
 #colors_new = unique_colors(final_result)
-
+#
 #print("New number of unique colors:", colors_original)
 #print("New number of unique colors:", colors_new)
 
@@ -147,22 +146,35 @@ six = np.array([47, 229, 47])
 seven = np.array([82, 179, 102])
 eight = np.array([90, 200, 39])
 
-area = (1+2/3) * 2.5
-one_one = (seven + six + (2/3)*four + (2/3)*five + (1/2)*four + 
-           (2/3)*(1/2)*five) / area
-one_two = (seven + four + (1/3)*four + (1/3)*five + (1/2)*(1/3)*five + 
-           0.5*one + (1/3)*two + (1/3)*eight + (1/3)*(1/2)*two) / area
-one_three = (three + three + (2/3)*two + (2/3)*eight + (1/2)*four + 
-             (2/3)*(1/2)*two) / area
-two_one = (three + five + (1/2)*four + (1/2)*(2/3)*five + (2/3)*four + 
-           (2/3)*five) / area
-two_two = (four + one + (1/3)*five + (1/3)*four + (1/3)*three + (1/3)*four + 
-           (1/3)*(1/2)*five + (1/3)*(1/2)*two) /  area
-two_three = (eight + one + (2/3)*three + (2/3)*four + (1/2)*four + 
-             (2/3)*(1/2)*two) / area
+# One way to calculate, using correct proportions of areas in average
+#area = (1+2/3) * 2.5
+#one_one = (seven + six + (2/3)*four + (2/3)*five + (1/2)*four + 
+#           (2/3)*(1/2)*five) / area
+#one_two = (seven + four + (1/3)*four + (1/3)*five + (1/2)*(1/3)*five + 
+#           0.5*one + (1/3)*two + (1/3)*eight + (1/3)*(1/2)*two) / area
+#one_three = (three + three + (2/3)*two + (2/3)*eight + (1/2)*four + 
+#             (2/3)*(1/2)*two) / area
+#two_one = (three + five + (1/2)*four + (1/2)*(2/3)*five + (2/3)*four + 
+#           (2/3)*five) / area
+#two_two = (four + one + (1/3)*five + (1/3)*four + (1/3)*three + (1/3)*four + 
+#           (1/3)*(1/2)*five + (1/3)*(1/2)*two) /  area
+#two_three = (eight + one + (2/3)*three + (2/3)*four + (1/2)*four + 
+#             (2/3)*(1/2)*two) / area
+#
+#new = np.stack([one_one, one_two, one_three, two_one, two_two, two_three],
+#                    axis=1)
 
-new = np.stack([one_one, one_two, one_three, two_one, two_two, two_three],
-                    axis=1)
+# Another way to calculate, taking all pixels included in bead as equal average
+# This should allow for not needing to drop any pixels
+zero_zero = (seven + four + six + five + four + five) / 6
+one_zero = (four + five + five + four + seven + one + two + eight + two) / 9
+two_zero = (two + eight + two + three + three + four) / 6
+zero_one = (four + three + five + five + four + five) / 6
+one_one = (five + four + five + one + four + one + two + four + three) / 9
+two_one = (two + four + three + four + eight + one) / 6
+new = np.stack([zero_zero, one_zero, two_zero, zero_one, one_one, two_one],
+               axis=1)
+
 r_test_result = np.reshape(new[0],[2,3])
 g_test_result = np.reshape(new[1],[2,3])
 b_test_result = np.reshape(new[2],[2,3])
