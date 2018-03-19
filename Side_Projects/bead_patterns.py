@@ -14,6 +14,8 @@ import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 import numpy as np
 #from scipy import ndimage
+from scipy.signal import convolve2d
+
 
 img=mpimg.imread('purple_flower.jpg')
 # img: [height, width, RGB]
@@ -40,15 +42,15 @@ def plt_image_components(full_color, reds, blues, greens, aspect_ratio):
     ax1 = fig.add_subplot(221)  # top left
     ax1 = plt.imshow(full_color, aspect=aspect_ratio, interpolation='nearest')
     ax2 = fig.add_subplot(222)  # top right
-    ax2 = plt.imshow(reds, aspect=aspect_ratio, cmap='Reds', 
+    ax2 = plt.imshow(reds, aspect=aspect_ratio, cmap=plt.cm.Reds_r, 
                      interpolation='nearest', vmin=0, vmax=256)
     plt.colorbar(ax2)
     ax3 = fig.add_subplot(223)  # bottom left
-    ax3 = plt.imshow(greens, aspect=aspect_ratio, cmap='Greens', 
+    ax3 = plt.imshow(greens, aspect=aspect_ratio, cmap=plt.cm.Greens_r,
                      interpolation='nearest', vmin=0, vmax=256)
     plt.colorbar(ax3)
     ax4 = fig.add_subplot(224)  # bottom right
-    ax4 = plt.imshow(blues, cmap='Blues', aspect=aspect_ratio, 
+    ax4 = plt.imshow(blues, aspect=aspect_ratio, cmap=plt.cm.Blues_r,
                      interpolation='nearest', vmin=0, vmax=256)
     plt.colorbar(ax4)
     
@@ -99,13 +101,13 @@ b_result = pixelate(small_blues, beads_h, beads_w, pixels_h, pixels_w)
 final_result = np.stack([r_result, g_result, b_result], 
                         axis=2).astype(np.uint8)
 
-#plt_image_components(img, img[:,:,0], img[:,:,1], img[:,:,2], 1)
-#plt_image_components(final_result, r_result, g_result, b_result, bead_aspect)
-#colors_original = unique_colors(img)
-#colors_new = unique_colors(final_result)
+plt_image_components(img, img[:,:,0], img[:,:,1], img[:,:,2], 1)
+plt_image_components(final_result, r_result, g_result, b_result, bead_aspect)
+colors_original = unique_colors(img)
+colors_new = unique_colors(final_result)
 #
-#print("New number of unique colors:", colors_original)
-#print("New number of unique colors:", colors_new)
+print("New number of unique colors:", colors_original)
+print("New number of unique colors:", colors_new)
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -174,6 +176,10 @@ one_one = (five + four + five + one + four + one + two + four + three) / 9
 two_one = (two + four + three + four + eight + one) / 6
 new = np.stack([zero_zero, one_zero, two_zero, zero_one, one_one, two_one],
                axis=1)
+
+# Another way to calculate the averages, as coordinates of pixels nearest the 
+# center of each new bead
+
 
 r_test_result = np.reshape(new[0],[2,3])
 g_test_result = np.reshape(new[1],[2,3])
