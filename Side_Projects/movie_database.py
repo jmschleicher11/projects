@@ -138,6 +138,8 @@ def movie_inflate_plots():
     
     movies_df = movie_inflate()
     
+    # Scatterplot of all movies' Domestic Box Office value plotted through time
+    plt.figure()
     ax1 = plt.subplot2grid((1, 1), (0, 0))
     ax1.plot(movies_df['Year'], movies_df['DomBoxOff'], marker='.', 
             linestyle='none')
@@ -145,7 +147,19 @@ def movie_inflate_plots():
     ax1.set_yscale('log')
     plt.xlabel('Year')
     plt.ylabel('Domestic Box Office')
-    plt.title('All Movies Domestic Box Office Valeus')
+    plt.title("All Movies' Domestic Box Office Values")
+    
+    # Scatterplot of all movies' Adjusted Domestic Box Office value plotted 
+    # through time
+    plt.figure()
+    ax1 = plt.subplot2grid((1, 1), (0, 0))
+    ax1.plot(movies_df['Year'], movies_df['Adjust_DomBO'], marker='.', 
+            linestyle='none')
+    ax1.set_ylim(10**2, 10**10)
+    ax1.set_yscale('log')
+    plt.xlabel('Year')
+    plt.ylabel('Adjusted Domestic Box Office')
+    plt.title("All Movies' Adjusted Domestic Box Office Values")
     
     bins = np.arange(min(movies_df['Year']), max(movies_df['Year'])+1)
     plt.figure()
@@ -217,13 +231,11 @@ def movies_by_year():
     year_max = groupby_movies.max()
     year_median = groupby_movies.median()
 
-    # Plot of Sum, Mean, & Maximum movies' adjusted domestic box office by year
+    # Plot of mean, max, & median movies' adjusted domestic box office by year
     fig, ax = plt.subplots()
-#    plt.scatter(year_sum.index, year_sum, marker='o', s=30, color='c',
-#                label='Sum')
     plt.scatter(year_mean.index, year_mean, marker='*', s=30, color='b', 
                 label='Mean')
-    plt.scatter(year_mean.index, year_max, marker='^', s=30, color='k', 
+    plt.scatter(year_max.index, year_max, marker='^', s=30, color='k', 
                 label='Max')
     plt.scatter(year_median.index, year_median, marker='p', s=30, color='m', 
                 label='Median')
@@ -235,11 +247,25 @@ def movies_by_year():
     plt.ylim([10**5, 10**10])
 
     # Boxplot of adjusted domestic box office by year
-    ax1 = df.boxplot(column='Adjust_DomBO',by='Year')
+    plt.figure()
+    ax1 = sns.boxplot(x='Year', y='Adjust_DomBO', data=df, fliersize=5)
     for label in ax1.xaxis.get_ticklabels():
         label.set_rotation(90)
     ax1.set_yscale('log')
-
+    plt.xlabel('Year')
+    plt.ylabel('Adjusted Domestic Box Office')
+    plt.title('Adjusted Domestic Box Office By Year')
+    
+    # Scatterplot of adjusted domestic box office by year
+    plt.figure()
+    ax1 = sns.stripplot(x='Year', y='Adjust_DomBO', data=df)
+    for label in ax1.xaxis.get_ticklabels():
+        label.set_rotation(90)
+    ax1.set_yscale('log')
+    plt.xlabel('Year')
+    plt.ylabel('Adjusted Domestic Box Office')
+    plt.title('Adjusted Domestic Box Office By Year')
+    
     return groupby_movies
 
 def ticket_sales():
@@ -263,7 +289,7 @@ def ticket_sales():
     
     return(movies_df)
     
-# Only uncomment if re-running the movie scraping part to update the file
+# Only uncomment if re-running the website scraping to update the movie file
 #movie_list()
 
 # Calling other functions individually
@@ -272,8 +298,8 @@ def ticket_sales():
 #inflation = inflation_rates()   # Not using this function anymore
 #cpi = cpi_values()
 #tix = ticket_prices()
-#grouped = movies_by_year()
-movies_df = ticket_sales()
+grouped = movies_by_year()
+#movies_df = ticket_sales()
 
 #top_100 = movies_df.nlargest(100, 'Tix_sold')
 #
