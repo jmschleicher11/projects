@@ -264,7 +264,7 @@ def ticket_sales():
     return(movies_df)
     
 # Only uncomment if re-running the movie scraping part to update the file
-movie_list()
+#movie_list()
 
 # Calling other functions individually
 #movies_df = movie_inflate()
@@ -273,7 +273,7 @@ movie_list()
 #cpi = cpi_values()
 #tix = ticket_prices()
 #grouped = movies_by_year()
-#movies_df = ticket_sales()
+movies_df = ticket_sales()
 
 #top_100 = movies_df.nlargest(100, 'Tix_sold')
 #
