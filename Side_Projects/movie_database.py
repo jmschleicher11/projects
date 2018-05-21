@@ -9,6 +9,7 @@ Created on Tue Dec 12 17:59:08 2017
 import pandas as pd
 import pickle
 import matplotlib.pyplot as plt
+import matplotlib.cm as cm
 import numpy as np
 import seaborn as sns
 
@@ -289,6 +290,34 @@ def ticket_sales():
     
     return(movies_df)
     
+def annual_ecdf(df, year, column):
+    
+    ''' Calculate empirical cumulative distribution function for a year '''
+    
+    year_movies = df[df.Year.isin([year])]
+    x = np.sort(year_movies[column])
+    y = np.arange(1, len(x)+1) / len(x)
+    
+    return x, y
+
+df = movie_inflate()
+years = range(2000, 2019)
+hot= plt.get_cmap('hot')
+colors = iter(hot(np.linspace(0, 1, len(years))))
+fig = plt.figure()
+ax = fig.add_subplot(111)
+for i in years:
+    x, y = annual_ecdf(df, i, 'Adjust_DomBO')
+    ax.plot(x, y, marker='.', linestyle='none', label=i, color=next(colors), 
+            alpha=0.7)
+    
+ax.legend(fontsize='small')
+plt.xlabel('Adjusted Domestic Box Office')
+plt.ylabel('ECDF')
+plt.margins(0.02)
+plt.show()
+
+
 # Only uncomment if re-running the website scraping to update the movie file
 #movie_list()
 
@@ -298,7 +327,7 @@ def ticket_sales():
 #inflation = inflation_rates()   # Not using this function anymore
 #cpi = cpi_values()
 #tix = ticket_prices()
-grouped = movies_by_year()
+#grouped = movies_by_year()
 #movies_df = ticket_sales()
 
 #top_100 = movies_df.nlargest(100, 'Tix_sold')
@@ -313,12 +342,6 @@ grouped = movies_by_year()
 #Divide by the number of movies each year?
 #
 #'''
-
-#grouped.describe()
-
-## A way to pull out all the movies from 1988
-#print(movies_df[movies_df.Year.isin([1988])])
-#
 ## Cool ways to get top grossing film, and top 10 grossing films
 #print(movies_df.loc[movies_df['Adjust_DomBO'].idxmax()])
-#print(movies_df.nlargest(10, 'Adjust_DomBO'))
+#print(movies_df.nlargest(20, 'Adjust_DomBO'))
