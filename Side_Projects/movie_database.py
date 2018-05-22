@@ -45,7 +45,9 @@ def movie_list():
     movies_df[cols] = movies_df[cols].replace( '[\$,]', '', 
              regex=True ).astype(int)
     
-    movies_df.set_index('Rank', inplace=True)
+    # Removing international-only movies (i.e. Domestic Box Office = 0)
+    movies_df = movies_df[movies_df.DomBoxOff != 0]
+    movies_df.reset_index(drop=True)
     
     pickle_out = open('movies.pickle', 'wb')
     pickle.dump(movies_df, pickle_out)
@@ -320,16 +322,14 @@ plt.margins(0.02)
 plt.show()
 
 
-
-
 # Calling other functions individually
 #movies_df = movie_inflate()
 #tix_df = tix_inflate()  
 #inflation = inflation_rates()   # Not using this function anymore
 #cpi = cpi_values()
 #tix = ticket_prices()
-#grouped = movies_by_year()
-#movies_df = ticket_sales()
+grouped = movies_by_year()
+movies_df = ticket_sales()
 
 #top_100 = movies_df.nlargest(100, 'Tix_sold')
 #
