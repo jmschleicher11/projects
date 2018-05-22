@@ -50,7 +50,8 @@ def movie_list():
     pickle_out = open('movies.pickle', 'wb')
     pickle.dump(movies_df, pickle_out)
     pickle_out.close()
-
+# Only uncomment if re-running the website scraping to update the movie file
+#movie_list()
     
 def inflation_rates():
     ''' 
@@ -301,25 +302,25 @@ def annual_ecdf(df, year, column):
     return x, y
 
 df = movie_inflate()
-years = range(2000, 2019)
+years = range(2010, 2019)
+col_of_interest = 'Adjust_DomBO'
 hot= plt.get_cmap('hot')
 colors = iter(hot(np.linspace(0, 1, len(years))))
 fig = plt.figure()
 ax = fig.add_subplot(111)
 for i in years:
-    x, y = annual_ecdf(df, i, 'Adjust_DomBO')
+    x, y = annual_ecdf(df, i, col_of_interest)
     ax.plot(x, y, marker='.', linestyle='none', label=i, color=next(colors), 
             alpha=0.7)
     
 ax.legend(fontsize='small')
-plt.xlabel('Adjusted Domestic Box Office')
+plt.xlabel(col_of_interest)
 plt.ylabel('ECDF')
 plt.margins(0.02)
 plt.show()
 
 
-# Only uncomment if re-running the website scraping to update the movie file
-#movie_list()
+
 
 # Calling other functions individually
 #movies_df = movie_inflate()
@@ -343,5 +344,5 @@ plt.show()
 #
 #'''
 ## Cool ways to get top grossing film, and top 10 grossing films
-#print(movies_df.loc[movies_df['Adjust_DomBO'].idxmax()])
-#print(movies_df.nlargest(20, 'Adjust_DomBO'))
+#print(df.loc[df['Adjust_DomBO'].idxmax()])
+#print(df.nlargest(20, 'Adjust_DomBO'))
