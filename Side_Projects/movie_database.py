@@ -47,47 +47,16 @@ def movie_list():
     
     # Removing international-only movies (i.e. Domestic Box Office = 0)
     movies_df = movies_df[movies_df.DomBoxOff != 0]
-    movies_df.reset_index(drop=True)
+    movies_df['new_index'] = range(len(movies_df))
+    movies_df.set_index('new_index', inplace=True)
+    
+#    movies_df.reset_index(drop=True)
     
     pickle_out = open('movies.pickle', 'wb')
     pickle.dump(movies_df, pickle_out)
     pickle_out.close()
 # Only uncomment if re-running the website scraping to update the movie file
 #movie_list()
-    
-def inflation_rates():
-    ''' 
-    NOT USING FUNCTION ANYMORE, USING CPI_VALUES INSTEAD
-    Pull inflation rates from website 
-    '''
-    
-    # Gives inflation rates in percentages
-    inflate = pd.read_html('http://www.usinflationcalculator.com/inflation/' +
-            'historical-inflation-rates/')[0][0:]
-
-    # Change column names to months and average, which was the first row, then
-    #   remove this row
-    inflate.columns = inflate.iloc[0]
-    inflate.drop(inflate.index[0], inplace=True)
-
-    inflate.set_index('Year', inplace=True)
-    inflate = inflate.astype(float)
-    
-    plt.figure()
-    inflate.Ave.plot()
-#    for column in inflate:
-#        inflate[column].plot(legend=True)
-    plt.xlabel('Year')
-    plt.ylabel('Average Annual Inflation Rate')
-    plt.show
-    
-    for (idx, row) in inflate.iterrows():
-    #    row.plot(legend=True)   # plots inflation rates for all months, with 
-    #                            # each line representing a year
-        print(idx)  # The years (index)
-        print(row)  # The months and inflation rates for each year
-
-    return inflate
 
 def cpi_values():
     
@@ -128,7 +97,7 @@ def movie_inflate():
     
     cpi_2018 = ave_cpi['2018']
     
-    for (idx, row) in movies_df.iterrows():
+    for idx, row in movies_df.iterrows():
 
         year_cpi = ave_cpi[str(movies_df.Year.iloc[idx-1])]
         year_adjust = (movies_df.DomBoxOff.iloc[idx-1] * cpi_2018) / year_cpi
@@ -172,7 +141,7 @@ def movie_inflate_plots():
     plt.xlabel('Year')
     plt.ylabel('Total Movies')
     
-#movie_inflate_plots()
+movie_inflate_plots()
 
 def tix_inflate():
     
@@ -306,8 +275,8 @@ def annual_ecdf(df, year, column):
 df = movie_inflate()
 years = range(2010, 2019)
 col_of_interest = 'Adjust_DomBO'
-hot= plt.get_cmap('hot')
-colors = iter(hot(np.linspace(0, 1, len(years))))
+viridis= plt.get_cmap('viridis')
+colors = iter(viridis(np.linspace(0, 1, len(years))))
 fig = plt.figure()
 ax = fig.add_subplot(111)
 for i in years:
@@ -323,9 +292,7 @@ plt.show()
 
 
 # Calling other functions individually
-#movies_df = movie_inflate()
 #tix_df = tix_inflate()  
-#inflation = inflation_rates()   # Not using this function anymore
 #cpi = cpi_values()
 #tix = ticket_prices()
 grouped = movies_by_year()
