@@ -12,6 +12,7 @@ import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 import numpy as np
 import seaborn as sns
+import re
 
 sns.set()
 
@@ -47,10 +48,8 @@ def movie_list():
     
     # Removing international-only movies (i.e. Domestic Box Office = 0)
     movies_df = movies_df[movies_df.DomBoxOff != 0]
-    movies_df['new_index'] = range(len(movies_df))
-    movies_df.set_index('new_index', inplace=True)
-    
-#    movies_df.reset_index(drop=True)
+    # Resetting index to be sequential after removing international movies    
+    movies_df.reset_index(drop=True, inplace=True)
     
     pickle_out = open('movies.pickle', 'wb')
     pickle.dump(movies_df, pickle_out)
@@ -99,8 +98,8 @@ def movie_inflate():
     
     for idx, row in movies_df.iterrows():
 
-        year_cpi = ave_cpi[str(movies_df.Year.iloc[idx-1])]
-        year_adjust = (movies_df.DomBoxOff.iloc[idx-1] * cpi_2018) / year_cpi
+        year_cpi = ave_cpi[str(movies_df.Year.iloc[idx])]
+        year_adjust = (movies_df.DomBoxOff.iloc[idx] * cpi_2018) / year_cpi
         mov_adjust.append(year_adjust)
 
     movies_df['Adjust_DomBO'] = pd.Series(mov_adjust, index=movies_df.index)
@@ -141,7 +140,7 @@ def movie_inflate_plots():
     plt.xlabel('Year')
     plt.ylabel('Total Movies')
     
-movie_inflate_plots()
+#movie_inflate_plots()
 
 def tix_inflate():
     
@@ -192,7 +191,7 @@ def cpi_tix_inflate_plots():
     plt.xlabel('Year')
     plt.ylabel('Average Ticket Prices ($)')
 
-#cpi_tix_inflate_plots()
+cpi_tix_inflate_plots()
 
 def movies_by_year():
     
@@ -292,11 +291,14 @@ plt.show()
 
 
 # Calling other functions individually
-#tix_df = tix_inflate()  
+tix_df = tix_inflate()  
 #cpi = cpi_values()
-#tix = ticket_prices()
-grouped = movies_by_year()
+#grouped = movies_by_year()
 movies_df = ticket_sales()
+
+#pattern=re.compile('Star Wars\w*')
+#pattern = re.compile()
+#movies_df.Movie.apply(lambda x: re.findall(pattern, x))
 
 #top_100 = movies_df.nlargest(100, 'Tix_sold')
 #
