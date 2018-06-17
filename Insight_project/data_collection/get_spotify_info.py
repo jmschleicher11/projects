@@ -1,76 +1,41 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Sat Jun 16 10:02:14 2018
-
-@author: Floreana
+Script to get the IDs and all the song information from Spotify, using 
+functions defined in spotify_functions
 """
 
-import spotipy
-from spotipy.oauth2 import SpotifyClientCredentials
-import spotipy.util as util
 import pandas as pd
+import sys
+direct = '/Users/Floreana/Documents/Jobs/Insight/data/'
+sys.path.append(direct)  
+from spotify_functions import get_ids, get_song_info
 
-import sys  
-sys.path.append('/Users/Floreana/Documents/Jobs/Insight/data/')  
-from Spotify_user_info import main
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Uncomment below if reading from text files and need Spotify song ID
 
-sp = spotipy.Spotify() 
+#bad_songs = get_ids('bad_songs.txt')
+#bad_songs_df = pd.DataFrame(bad_songs, columns=['Id', 'Song', 'Artist'])
+#bad_songs_df.to_pickle((direct+'bad_id_song_artist.pickle'))
 
-# Access my Spotify API id etc.
-cid, secret, username, scope, redirect_uri = main()
+#good_songs = get_ids('good_songs.txt')
+#good_songs_df = pd.DataFrame(good_songs, columns=['Id', 'Song', 'Artist'])
+#good_songs_df.to_pickle((direct+'good_id_song_artist.pickle'))
 
+#range_songs = get_ids('range_songs.txt')
+#range_songs_df = pd.DataFrame(range_songs, columns=['Id', 'Song', 'Artist'])
+#range_songs_df.to_pickle((direct+'range_id_song_artist.pickle'))
 
-client_credentials_manager = SpotifyClientCredentials(client_id=cid, 
-                                                      client_secret=secret) 
-sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Uncomment below if reading from text files with song ID and need all the info
 
-token = util.prompt_for_user_token(username, scope, client_id=cid, 
-                                   client_secret=secret, 
-                                   redirect_uri=redirect_uri)
+bad_songs_df = pd.read_pickle((direct+'bad_id_song_artist.pickle'))
+good_songs_df = pd.read_pickle((direct+'good_id_song_artist.pickle'))
+range_songs_df = pd.read_pickle((direct+'range_id_song_artist.pickle'))
 
-if token:
-    sp = spotipy.Spotify(auth=token)
-else:
-    print("Can't get token for", username)
-
-def spotify_info_songs(song_id_list):
-    '''
-    Function to access Spotify API and get information & features about songs
-    '''
-
-    track_ids = song_id_list
-    
-    # Initialize arrays for collecting song data
-    information = []
-    album_date = []
-    explicit = []
-    popularity = []
-    preview_url = []
-    
-    for track_id in track_ids:    
-        
-        # If Spotifiy couldn't identify song, sets ID to 0
-        if track_id == '0':
-            continue
-        
-        # Pull all song features 
-        song_features = sp.audio_features(track_id)
-        information.append(song_features[0])
-        
-        # Pull information of songs not in song features or the range dataframe
-        track_info = sp.track(track_id)
-        album_date.append(track_info['album']['release_date'])
-        explicit.append(track_info['explicit'])
-        popularity.append(track_info['popularity'])
-        preview_url.append(track_info['preview_url'])
-    
-    # Create a song dataframe with track information
-    all_information = pd.DataFrame(information)
-    song_data_df = pd.DataFrame({'album_date':album_date, 
-                                 'popularity':popularity, 'explicit':explicit, 
-                                 'preview_url': preview_url})
-
-    song_data_df = pd.concat([song_data_df, all_information], axis=1)
-    
-    return song_data_df
+all_bad_song_info = get_song_info(pd.Series(bad_songs_df['Id']))
+all_bad_song_info.to_pickle((direct+'all_bad_song_info.pickle'))
+all_good_song_info = get_song_info(pd.Series(good_songs_df['Id']))
+all_good_song_info.to_pickle((direct+'all_good_song_info.pickle'))
+all_range_song_info = get_song_info(pd.Series(range_songs_df['Id']))
+all_range_song_info.to_pickle((direct+'all_range_song_info.pickle'))

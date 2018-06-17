@@ -141,8 +141,12 @@ males_df['Gender'] = np.full([len(males_df)], 'M')
 
 songs_df = pd.concat([females_df, males_df], axis=0)
 
-# Save to text files for later analysis
-songs_df.to_csv((direct + 'range_songs.txt'), columns=['Song', 'Artist'], 
-                sep=';', index=False, header=False)
-songs_df.to_csv((direct + 'all_songs_info.txt'))
+#songs_df.to_csv((direct + 'all_songs_info.txt'))
+#
+## Save to text files for later analysis
+#songs_df.to_csv((direct + 'range_songs.txt'), columns=['Song', 'Artist'], 
+#                sep=';', index=False, header=False)
 
+new_songs_df = pd.read_csv(direct + 'all_songs_edited.txt')
+new_songs_df.to_csv((direct + 'range_songs.txt'), columns=['Song', 'Artist'], 
+                sep=';', index=False, header=False)
