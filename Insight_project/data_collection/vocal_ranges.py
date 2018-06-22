@@ -142,11 +142,10 @@ males_df['Gender'] = np.full([len(males_df)], 'M')
 songs_df = pd.concat([females_df, males_df], axis=0)
 
 #songs_df.to_csv((direct + 'all_songs_info.txt'))
-#
-## Save to text files for later analysis
-#songs_df.to_csv((direct + 'range_songs.txt'), columns=['Song', 'Artist'], 
-#                sep=';', index=False, header=False)
 
+# Had to manually edit several songs in all_songs_info.txt to get them in a 
+# format recognizable by Spotify. 
 new_songs_df = pd.read_csv(direct + 'all_songs_edited.txt')
+# Just need the Song and Artist of songs to find in Spotify
 new_songs_df.to_csv((direct + 'range_songs.txt'), columns=['Song', 'Artist'], 
                 sep=';', index=False, header=False)

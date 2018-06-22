@@ -13,6 +13,7 @@ import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
 import spotipy.util as util
 import pandas as pd
+import time
 
 import sys
 direct = '/Users/Floreana/Documents/Jobs/Insight/data/'
@@ -54,7 +55,7 @@ def get_song_codes(data, delim, spotify_limit):
         trackTitle=l[0]     
         # [:-1] removes the newline at the end of every line. Make this 
         # [:-2] if you also have a space at the end of each line
-        artist=l[1][:-1]    
+        artist=l[1][:-1]
 
         r = sp.search(trackTitle, limit=spotify_limit)
 
@@ -73,6 +74,7 @@ def get_song_codes(data, delim, spotify_limit):
             notfound.append(trackTitle+delim+artist+'\n')
         else:
              print('Added song',trackTitle,'by artist',artist)
+        time.sleep(0.1)
 
     print("\nSongs not added: ")
     for line in notfound:
@@ -111,6 +113,8 @@ def get_song_info(song_id_list):
     
     # Initialize arrays for collecting song data
     information = []
+    song = []
+    artist = []
     album_date = []
     explicit = []
     popularity = []
@@ -128,14 +132,19 @@ def get_song_info(song_id_list):
         
         # Pull information of songs not in song features or the range dataframe
         track_info = sp.track(track_id)
+        song.append(track_info['name'])
+        artist.append(track_info['artists'][0]['name'])
         album_date.append(track_info['album']['release_date'])
         explicit.append(track_info['explicit'])
         popularity.append(track_info['popularity'])
         preview_url.append(track_info['preview_url'])
+        
+        time.sleep(0.1)
     
     # Create a song dataframe with track information
     all_information = pd.DataFrame(information)
-    song_data_df = pd.DataFrame({'album_date':album_date, 
+    song_data_df = pd.DataFrame({'song':song, 'artist':artist,
+                                 'album_date':album_date, 
                                  'popularity':popularity, 'explicit':explicit, 
                                  'preview_url': preview_url})
 
