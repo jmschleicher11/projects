@@ -34,7 +34,7 @@ image processing and web scraping.
 A short project that examined the domestic box office records would change if
 inflation were accounted for. I scraped www.the-numbers.com/box-office-records/ to
 get the top 5000 grossing movies, then calculated inflation rates from CPI records in
-the US, as well as average ticket prices.
+the US, as well as average ticket prices. [PYTHON}
 ### bead_patterns.py
 A start to a project that would pixelate an input image so it could be used as
-a beading pattern.
+a beading pattern. [PYTHON]
